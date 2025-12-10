@@ -6,7 +6,6 @@ import os
 from dotenv import load_dotenv
 from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
-from google.genai.types import FunctionDeclaration
 
 # Load environment variables
 load_dotenv()
@@ -70,59 +69,6 @@ def divide_numbers(a: float, b: float) -> float:
     return a / b
 
 
-# Define function declarations for the tools
-add_tool = FunctionDeclaration(
-    name="add_numbers",
-    description="Add two numbers together",
-    parameters={
-        "type": "object",
-        "properties": {
-            "a": {"type": "number", "description": "First number"},
-            "b": {"type": "number", "description": "Second number"},
-        },
-        "required": ["a", "b"],
-    },
-)
-
-multiply_tool = FunctionDeclaration(
-    name="multiply_numbers",
-    description="Multiply two numbers together",
-    parameters={
-        "type": "object",
-        "properties": {
-            "a": {"type": "number", "description": "First number"},
-            "b": {"type": "number", "description": "Second number"},
-        },
-        "required": ["a", "b"],
-    },
-)
-
-subtract_tool = FunctionDeclaration(
-    name="subtract_numbers",
-    description="Subtract the second number from the first number",
-    parameters={
-        "type": "object",
-        "properties": {
-            "a": {"type": "number", "description": "First number"},
-            "b": {"type": "number", "description": "Second number to subtract"},
-        },
-        "required": ["a", "b"],
-    },
-)
-
-divide_tool = FunctionDeclaration(
-    name="divide_numbers",
-    description="Divide the first number by the second number",
-    parameters={
-        "type": "object",
-        "properties": {
-            "a": {"type": "number", "description": "Numerator"},
-            "b": {"type": "number", "description": "Denominator (cannot be zero)"},
-        },
-        "required": ["a", "b"],
-    },
-)
-
 # Load configuration from environment variables
 model = os.getenv("MODEL", "gpt-3.5-turbo")
 llm_endpoint = os.getenv("LLM_ENDPOINT", "https://api.openai.com/v1")
@@ -136,9 +82,10 @@ llm = LiteLlm(
 )
 
 # Create the agent with tools
+# Google ADK automatically converts Python functions to tools using their docstrings and type hints
 agent = Agent(
     model=llm,
-    tools=[add_tool, multiply_tool, subtract_tool, divide_tool],
-    name="Calculator Agent",
+    tools=[add_numbers, multiply_numbers, subtract_numbers, divide_numbers],
+    name="calculator_agent",
     description="A helpful calculator agent that can perform basic arithmetic operations including addition, subtraction, multiplication, and division.",
 )
