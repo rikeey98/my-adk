@@ -85,10 +85,11 @@ The calculator agent includes the following tools:
 
 ```
 .
-├── agents/                      # Agent directory for adk web
-│   ├── agent.py                 # Root agent using LlmAgent
-│   └── calculator_agent/        # Calculator agent
-│       ├── __init__.py          # Package initialization (exports root_agent)
+├── agents/                      # Root agent package
+│   ├── __init__.py              # Package initialization (exports root_agent)
+│   ├── agent.py                 # Root agent definition using LlmAgent
+│   └── calculator_agent/        # Sub-agent: Calculator
+│       ├── __init__.py          # Sub-agent package (exports root_agent alias)
 │       └── agent.py             # Calculator-specific agent with arithmetic tools
 ├── main.py                      # CLI version of the agent
 ├── pyproject.toml               # Project configuration and dependencies
@@ -96,6 +97,12 @@ The calculator agent includes the following tools:
 ├── README.md                    # This file
 └── .python-version              # Python version specification
 ```
+
+### Agent Hierarchy
+
+- **Root Agent** (`agents/agent.py`): General-purpose LlmAgent accessible via `from agents import root_agent`
+- **Sub-Agents** (`agents/*/`): Specialized agents for specific tasks
+  - `calculator_agent`: Arithmetic operations (add, subtract, multiply, divide)
 
 ## Features
 
