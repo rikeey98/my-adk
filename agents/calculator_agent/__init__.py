@@ -2,4 +2,7 @@
 
 from .agent import agent
 
-__all__ = ["agent"]
+# ADK Web UI looks for 'root_agent' by convention
+root_agent = agent
+
+__all__ = ["agent", "root_agent"]
