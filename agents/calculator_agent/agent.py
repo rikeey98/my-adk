@@ -4,7 +4,7 @@ This agent can perform basic arithmetic operations.
 """
 import os
 from dotenv import load_dotenv
-from google.adk.agents import Agent
+from google.adk.agents.llm_agent import LlmAgent
 from google.adk.models.lite_llm import LiteLlm
 
 # Load environment variables
@@ -81,9 +81,9 @@ llm = LiteLlm(
     api_key=llm_key,
 )
 
-# Create the agent with tools
+# Create the calculator agent with tools
 # Google ADK automatically converts Python functions to tools using their docstrings and type hints
-agent = Agent(
+agent = LlmAgent(
     model=llm,
     tools=[add_numbers, multiply_numbers, subtract_numbers, divide_numbers],
     name="calculator_agent",
