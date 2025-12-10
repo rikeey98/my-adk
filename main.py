@@ -1,11 +1,16 @@
 """
 Basic Google ADK Agent Application
 This is a simple example of using Google's Agent Development Kit (ADK)
+with LiteLLM for OpenAI-compatible models
 """
 import os
+from dotenv import load_dotenv
 from google.adk.agents import Agent
-from google.genai.client import Client
-from google.genai.types import GenerateContentConfig, Tool, FunctionDeclaration
+from google.adk.models.lite_llm import LiteLlm
+from google.genai.types import Tool, FunctionDeclaration
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # Define a simple calculator tool
@@ -20,18 +25,27 @@ def multiply_numbers(a: float, b: float) -> float:
 
 
 def main():
-    """Run the basic ADK agent."""
-    print("🤖 Starting Google ADK Agent...\n")
+    """Run the basic ADK agent with LiteLLM."""
+    print("🤖 Starting Google ADK Agent with LiteLLM...\n")
 
-    # Initialize the Gemini client
-    # Note: You need to set GOOGLE_API_KEY environment variable
-    api_key = os.getenv("GOOGLE_API_KEY")
+    # Load configuration from environment variables
+    model = os.getenv("MODEL")
+    llm_endpoint = os.getenv("LLM_ENDPOINT")
+    llm_key = os.getenv("LLM_KEY")
 
-    if not api_key:
-        print("⚠️  Warning: GOOGLE_API_KEY environment variable not set")
-        print("To use this agent with Gemini, please set your API key:")
-        print("export GOOGLE_API_KEY='your-api-key-here'\n")
+    # Validate required environment variables
+    if not all([model, llm_endpoint, llm_key]):
+        print("⚠️  Error: Missing required environment variables")
+        print("Please create a .env file with the following variables:")
+        print("  - MODEL: Model name (e.g., gpt-3.5-turbo)")
+        print("  - LLM_ENDPOINT: API endpoint (e.g., https://api.openai.com/v1)")
+        print("  - LLM_KEY: Your API key")
+        print("\nSee .env.example for a template\n")
         return
+
+    print(f"Model: {model}")
+    print(f"Endpoint: {llm_endpoint}")
+    print()
 
     # Define function declarations for the tools
     add_tool = FunctionDeclaration(
@@ -60,20 +74,24 @@ def main():
         },
     )
 
-    # Create the agent with tools
-    tools = Tool(function_declarations=[add_tool, multiply_tool])
+    # Create tools list
+    tools = [add_tool, multiply_tool]
 
-    # Create agent configuration
-    config = GenerateContentConfig(
-        temperature=0.7,
-        tools=[tools],
+    # Initialize LiteLLM model
+    llm = LiteLlm(
+        model=model,
+        api_base=llm_endpoint,
+        api_key=llm_key,
     )
 
-    # Initialize the client
-    client = Client(api_key=api_key)
+    # Create the agent with LiteLLM and tools
+    agent = Agent(
+        model=llm,
+        tools=tools,
+    )
 
     print("✅ Google ADK Agent initialized successfully!")
-    print("Available tools: add_numbers, multiply_numbers")
+    print(f"Available tools: {', '.join([t.name for t in tools])}")
     print("\nExample usage:")
     print("  - What is 5 + 3?")
     print("  - Multiply 4 by 7")
@@ -84,13 +102,9 @@ def main():
     print(f"User: {prompt}")
 
     # Generate response using the agent
-    response = client.models.generate_content(
-        model="gemini-2.0-flash-exp",
-        contents=prompt,
-        config=config,
-    )
+    response = agent.run(prompt)
 
-    print(f"Agent: {response.text}\n")
+    print(f"Agent: {response}\n")
 
 
 if __name__ == "__main__":
