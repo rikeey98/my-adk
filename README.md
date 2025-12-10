@@ -86,9 +86,10 @@ The calculator agent includes the following tools:
 ```
 .
 ├── agents/                      # Agent directory for adk web
+│   ├── agent.py                 # Root agent using LlmAgent
 │   └── calculator_agent/        # Calculator agent
-│       ├── __init__.py          # Package initialization
-│       └── agent.py             # Agent definition with tools
+│       ├── __init__.py          # Package initialization (exports root_agent)
+│       └── agent.py             # Calculator-specific agent with arithmetic tools
 ├── main.py                      # CLI version of the agent
 ├── pyproject.toml               # Project configuration and dependencies
 ├── .env.example                 # Environment variables template
@@ -98,12 +99,13 @@ The calculator agent includes the following tools:
 
 ## Features
 
-- Google ADK integration with LiteLLM
+- Google ADK integration with LiteLLM using LlmAgent
 - Multi-tool agent support
 - OpenAI-compatible model support (OpenAI, Azure, Anthropic, etc.)
-- Environment-based configuration
-- Interactive browser-based development UI
-- Simple calculator tools (add, multiply, subtract, divide)
+- Environment-based configuration (.env file)
+- Interactive browser-based development UI (adk web)
+- Modular agent structure (root agent + specialized agents)
+- Calculator agent with 4 arithmetic operations (add, multiply, subtract, divide)
 
 ## Resources
 

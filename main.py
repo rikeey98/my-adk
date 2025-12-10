@@ -5,7 +5,7 @@ with LiteLLM for OpenAI-compatible models
 """
 import os
 from dotenv import load_dotenv
-from google.adk.agents import Agent
+from google.adk.agents.llm_agent import LlmAgent
 from google.adk.models.lite_llm import LiteLlm
 
 # Load environment variables from .env file
@@ -55,7 +55,7 @@ def main():
 
     # Create the agent with LiteLLM and tools
     # Google ADK automatically converts Python functions to tools using their docstrings
-    agent = Agent(
+    agent = LlmAgent(
         model=llm,
         tools=[add_numbers, multiply_numbers],
         name="simple_calculator",
