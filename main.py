@@ -7,7 +7,6 @@ import os
 from dotenv import load_dotenv
 from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
-from google.genai.types import Tool, FunctionDeclaration
 
 # Load environment variables from .env file
 load_dotenv()
@@ -47,36 +46,6 @@ def main():
     print(f"Endpoint: {llm_endpoint}")
     print()
 
-    # Define function declarations for the tools
-    add_tool = FunctionDeclaration(
-        name="add_numbers",
-        description="Add two numbers together",
-        parameters={
-            "type": "object",
-            "properties": {
-                "a": {"type": "number", "description": "First number"},
-                "b": {"type": "number", "description": "Second number"},
-            },
-            "required": ["a", "b"],
-        },
-    )
-
-    multiply_tool = FunctionDeclaration(
-        name="multiply_numbers",
-        description="Multiply two numbers together",
-        parameters={
-            "type": "object",
-            "properties": {
-                "a": {"type": "number", "description": "First number"},
-                "b": {"type": "number", "description": "Second number"},
-            },
-            "required": ["a", "b"],
-        },
-    )
-
-    # Create tools list
-    tools = [add_tool, multiply_tool]
-
     # Initialize LiteLLM model
     llm = LiteLlm(
         model=model,
@@ -85,13 +54,15 @@ def main():
     )
 
     # Create the agent with LiteLLM and tools
+    # Google ADK automatically converts Python functions to tools using their docstrings
     agent = Agent(
         model=llm,
-        tools=tools,
+        tools=[add_numbers, multiply_numbers],
+        name="simple_calculator",
     )
 
     print("✅ Google ADK Agent initialized successfully!")
-    print(f"Available tools: {', '.join([t.name for t in tools])}")
+    print(f"Available tools: add_numbers, multiply_numbers")
     print("\nExample usage:")
     print("  - What is 5 + 3?")
     print("  - Multiply 4 by 7")
