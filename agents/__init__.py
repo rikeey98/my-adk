@@ -9,5 +9,6 @@ Structure:
 """
 
 from .agent import root_agent
-
+import litellm
 __all__ = ["root_agent"]
+litellm._turn_on_debug()
